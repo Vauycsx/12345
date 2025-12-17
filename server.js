@@ -27,14 +27,37 @@ const io = socketIo(server, {
     transports: ['websocket', 'polling']
 });
 
-// Підключення до MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/harmony', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-.then(() => console.log('✅ MongoDB connected'))
-.catch(err => console.log('❌ MongoDB error:', err));
+async function connectDB() {
+    try {
+        await mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://gejmgejm989_db_user:K2NPh3GeZwvRRl7I@harmony.aquqway.mongodb.net/?appName=harmony', {
+            serverSelectionTimeoutMS: 5000,
+            socketTimeoutMS: 45000,
+        });
+        console.log('✅ MongoDB connected successfully');
+        
+        // Перевірка підключення
+        mongoose.connection.on('error', err => {
+            console.error('❌ MongoDB connection error:', err);
+        });
+        
+        mongoose.connection.on('disconnected', () => {
+            console.log('⚠️ MongoDB disconnected');
+        });
+        
+        process.on('SIGINT', async () => {
+            await mongoose.connection.close();
+            console.log('👋 MongoDB connection closed through app termination');
+            process.exit(0);
+        });
+        
+    } catch (error) {
+        console.error('❌ MongoDB connection failed:', error);
+        process.exit(1);
+    }
+}
 
+// Виклик функції підключення
+connectDB();
 // Моделі
 const User = mongoose.model('User', {
     nickname: String,
@@ -78,26 +101,18 @@ const Room = mongoose.model('Room', {
 
 // Секретні коди
 const SECRET_CODES = {
-    "HX-0104-3107-15": {
+    "HX-3107-0104-15": {
         nickname: "Принцеса",
         avatar: "fas fa-crown",
         role: "special",
         color: "#ffcfe1"
     },
-    "admin": {
+    "HX-0104-3107-15": {
         nickname: "Макс",
         avatar: "fas fa-star",
         role: "admin",
         color: "#ffb6d0"
-    },
-    "demo": {
-        nickname: "Демо-користувач",
-        avatar: "fas fa-user",
-        role: "user",
-        color: "#ffcfe1"
-    }
-};
-
+    };
 // Middleware для перевірки токена
 const auth = async (req, res, next) => {
     try {
@@ -394,42 +409,6 @@ app.post('/api/rooms/join', auth, async (req, res) => {
         res.status(500).json({ error: 'Не вдалося приєднатися до кімнати' });
     }
 });
-
-// 13. Демо пісні для тестування
-app.get('/api/demo-songs', (req, res) => {
-    const demoSongs = [
-        {
-            id: 'demo1',
-            title: 'Тиха мелодія',
-            artist: 'Harmony Demo',
-            duration: '0:30',
-            url: 'https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130-30s.mp3',
-            demo: true,
-            color: '#ffcfe1'
-        },
-        {
-            id: 'demo2',
-            title: 'Сонячний день',
-            artist: 'Harmony Demo',
-            duration: '0:30',
-            url: 'https://assets.mixkit.co/music/preview/mixkit-driving-ambition-32-30s.mp3',
-            demo: true,
-            color: '#ffb6d0'
-        },
-        {
-            id: 'demo3',
-            title: 'Вечірній бриз',
-            artist: 'Harmony Demo',
-            duration: '0:30',
-            url: 'https://assets.mixkit.co/music/preview/mixkit-deep-urban-623-30s.mp3',
-            demo: true,
-            color: '#ffa8d9'
-        }
-    ];
-    
-    res.json(demoSongs);
-});
-
 // 14. Health check для Render
 app.get('/health', (req, res) => {
     res.json({ 
@@ -502,10 +481,11 @@ app.use((req, res) => {
 });
 
 // Старт сервера
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 server.listen(PORT, () => {
     console.log(`🚀 Harmony Backend запущено на порті ${PORT}`);
     console.log(`🔗 API: http://localhost:${PORT}`);
     console.log(`📡 WebSocket: ws://localhost:${PORT}`);
     console.log(`📊 Health check: http://localhost:${PORT}/health`);
+
 });
