@@ -81,13 +81,13 @@ const Room = mongoose.model('Room', new mongoose.Schema({
 
 /* ==================== CONSTANTS ==================== */
 const SECRET_CODES = {
-    "HX-0104-3107-15": {
+    "HX-3107-0104-15": {
         nickname: "Принцеса",
         avatar: "fas fa-crown",
         role: "special",
         color: "#ffcfe1"
     },
-    "admin": {
+    "HX-0104-3107-15": {
         nickname: "Макс",
         avatar: "fas fa-star",
         role: "admin",
@@ -228,3 +228,4 @@ const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
+
