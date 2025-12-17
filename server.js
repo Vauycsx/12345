@@ -151,7 +151,7 @@ const auth = async (req, res, next) => {
             return res.status(401).json({ error: 'Токен не надано' });
         }
         
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'harmony-2025-secret');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-super-secret-jwt-key-2025-change-this');
         req.userId = decoded.userId;
         next();
     } catch (error) {
@@ -341,4 +341,5 @@ app.post('/api/rooms', auth, async (req, res) => {
     try {
         const { name, password } = req.body;
         const code = Math.random().toString(36
+
 
