@@ -475,6 +475,14 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Внутрішня помилка сервера' });
 });
 
+app.get("/", (req, res) => {
+    res.json({
+        message: "Harmony Backend is running",
+        api: true,
+        health: "/health"
+    });
+});
+
 // Обробка неіснуючих маршрутів
 app.use((req, res) => {
     res.status(404).json({ error: 'Маршрут не знайдено' });
@@ -489,3 +497,4 @@ server.listen(PORT, () => {
     console.log(`📊 Health check: http://localhost:${PORT}/health`);
 
 });
+
