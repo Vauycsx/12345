@@ -37,7 +37,7 @@ const io = socketIo(server, {
 // ============ ПОЛІПШЕНЕ ПІДКЛЮЧЕННЯ MONGODB ДЛЯ 2025 ============
 async function connectDB() {
     try {
-        const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/harmony';
+        const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://gejmgejm989_db_user:K2NPh3GeZwvRRl7I@harmony.aquqway.mongodb.net/?appName=harmony';
         console.log('🔗 Підключення до MongoDB...');
         
         await mongoose.connect(mongoURI, {
@@ -341,3 +341,4 @@ app.post('/api/rooms', auth, async (req, res) => {
     try {
         const { name, password } = req.body;
         const code = Math.random().toString(36
+
